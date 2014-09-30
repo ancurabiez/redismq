@@ -1,0 +1,9 @@
+This is simple message queue using redis.
+
+Features:
+- Function:
+    - rmq_connect
+    - rmq_get
+    - rmq_put
+- Blocking
+- Auto reconnect when connection lost
