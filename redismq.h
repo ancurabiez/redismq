@@ -1,11 +1,11 @@
-/*********************************************/
-/*** Copyright (c) 2014, Lulus Wijayakto   ***/
-/***                                       ***/
-/*** Email : l.wijayakto@yahoo.com         ***/
-/***         l.wijayakto@gmail.com         ***/
-/***                                       ***/
-/*** License: BSD 3-Clause                 ***/
-/*********************************************/
+/********************************************
+*** Copyright (c) 2014, Lulus Wijayakto   ***
+***                                       ***
+*** Email : l.wijayakto@yahoo.com         ***
+***         l.wijayakto@gmail.com         ***
+***                                       ***
+*** License: BSD 3-Clause                 ***
+*********************************************/
 
 #ifndef REDIS_MQ_H
 #define REDIS_MQ_H

@@ -1,11 +1,11 @@
-/*********************************************/
-/*** Copyright (c) 2014, Lulus Wijayakto   ***/
-/***                                       ***/
-/*** Email : l.wijayakto@yahoo.com         ***/
-/***         l.wijayakto@gmail.com         ***/
-/***                                       ***/
-/*** License: BSD 3-Clause
-/*********************************************/
+/********************************************
+*** Copyright (c) 2014, Lulus Wijayakto   ***
+***                                       ***
+*** Email : l.wijayakto@yahoo.com         ***
+***         l.wijayakto@gmail.com         ***
+***                                       ***
+*** License: BSD 3-Clause                 ***
+*********************************************/
 
 #include <stdio.h>
 #include <string.h>
@@ -201,8 +201,10 @@ int rmq_put(redisContext **rctx, const char *key, char *val, int val_len)
       rep = multi_command_put(rctx, key, val, val_len);
    }
 
-   if (rep->elements == 4)
-      ret = 1;
+   if (rep->elements == 3) {
+      if (rep->element[2]->type == REDIS_REPLY_INTEGER)
+        ret = 1;
+   }
 
    freeReplyObject(rep);
 
