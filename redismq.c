@@ -1,11 +1,11 @@
-/********************************************
-*** Copyright (c) 2014, Lulus Wijayakto   ***
-***                                       ***
-*** Email : l.wijayakto@yahoo.com         ***
-***         l.wijayakto@gmail.com         ***
-***                                       ***
-*** License: BSD 3-Clause                 ***
-*********************************************/
+/*********************************************/
+/*** Copyright (c) 2014, Lulus Wijayakto   ***/
+/***                                       ***/
+/*** Email : l.wijayakto@yahoo.com         ***/
+/***         l.wijayakto@gmail.com         ***/
+/***                                       ***/
+/*** License: BSD 3-Clause
+/*********************************************/
 
 #include <stdio.h>
 #include <string.h>
@@ -17,7 +17,7 @@
 #include "redismq.h"
 
 
-char host__[32];
+char host__[64];
 int port__;
 int flag__;
 int once = 0;
@@ -107,7 +107,7 @@ static redisReply* multi_command_put(redisContext **rctx, const char *key,
    freeReplyObject(rep);
 
    // put data to queue
-   rep = redisCommand(*rctx, "LPUSH redismq:%s %b", key, val, val_len);
+   rep = redisCommand(*rctx, "RPUSH redismq:%s %b", key, val, val_len);
    freeReplyObject(rep);
 
    // increment put stat
@@ -136,26 +136,25 @@ char* rmq_get(redisContext **rctx, const char *key, int timeout)
    freeReplyObject(rep);
    
    if (timeout > 0)
-      rep = redisCommand(*rctx, "BRPOP redismq:%s %d", key, timeout);
+      rep = redisCommand(*rctx, "BLPOP redismq:%s %d", key, timeout);
    else
-      rep = redisCommand(*rctx, "RPOP redismq:%s", key);
+      rep = redisCommand(*rctx, "LPOP redismq:%s", key);
 
    if (!rep) {
      rmq_reconnect(rctx);
 
      // re-execute
       if (timeout > 0)
-         rep = redisCommand(*rctx, "BRPOP redismq:%s %d", key, timeout);
+         rep = redisCommand(*rctx, "BLPOP redismq:%s %d", key, timeout);
       else
-         rep = redisCommand(*rctx, "RPOP redismq:%s", key);
+         rep = redisCommand(*rctx, "LPOP redismq:%s", key);
    }
 
    if ((rep->type == 1) && (rep->elements == 0)) {
       if (rep->str) {
-         res = malloc(rep->len + 1);
+         res = je_malloc(rep->len);
          assert(res);
 
-         memset(res, 0, rep->len +1);
          memcpy(res, rep->str, rep->len);
          freeReplyObject(rep);
 
@@ -167,12 +166,10 @@ char* rmq_get(redisContext **rctx, const char *key, int timeout)
    }
    else if ((rep->type == 2) && (rep->elements == 2)) {
       if (rep->element[1]->str) {
-         res = malloc(rep->element[1]->len + 1);
+         res = je_malloc(rep->element[1]->len);
          assert (res);
 
-         memset(res, 0, rep->element[1]->len +1);
          memcpy(res, rep->element[1]->str, rep->element[1]->len);
-      
          freeReplyObject(rep);
 
          // increment put stat
